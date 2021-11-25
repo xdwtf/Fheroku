@@ -1,5 +1,8 @@
 TgCrypto
 ffmpeg-python
 psutil
-pytgcalls[pyrogram]
+pytgcalls==2.1.0
 wheel
+Flask
+Gunicorn
+pyrogram
