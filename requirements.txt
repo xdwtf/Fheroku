@@ -1,6 +1,6 @@
 ffmpeg-python
 psutil
-pytgcalls==2.1.0
+pytgcalls==2.0.0
 wheel
 Flask
 Gunicorn
