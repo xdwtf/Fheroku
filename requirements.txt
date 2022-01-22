@@ -1,9 +1,9 @@
 ffmpeg-python
 psutil
-pytgcalls==3.0.0.dev19
+pytgcalls==3.0.0.dev21 
 wheel
 Flask
 Gunicorn
-# pyrogram
-git+https://github.com/subinps/pyrogram.git@session
+pyrogram
+#git+https://github.com/subinps/pyrogram.git@session
 TgCrypto
