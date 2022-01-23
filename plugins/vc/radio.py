@@ -1,14 +1,10 @@
-"""
-https://github.com/MarshalX/tgcalls/blob/main/examples/radio_as_smart_plugin.py
-154ef295a3fe3a2383bbd0275a1195c6fafd307d
-"""
 import signal
 
-# noinspection PyPackageRequirements
 import ffmpeg  # pip install ffmpeg-python
 from pyrogram import Client, filters
 from pyrogram.types import Message
-from pytgcalls import GroupCall  # pip install pytgcalls
+
+from pytgcalls import GroupCallFactory  # pip install pytgcalls[pyrogram]
 
 # Example of pinned message in a chat:
 '''
@@ -38,13 +34,11 @@ async def start(client, message: Message):
 
     group_call = GROUP_CALLS.get(message.chat.id)
     if group_call is None:
-        group_call = GroupCall(client, input_filename, path_to_log_file='')
+        group_call = GroupCallFactory(client, path_to_log_file='').get_file_group_call(input_filename)
         GROUP_CALLS[message.chat.id] = group_call
 
     if not message.reply_to_message or len(message.command) < 2:
-        await message.reply_text(
-            'You forgot to replay list of stations or pass a station ID'
-        )
+        await message.reply_text('You forgot to replay list of stations or pass a station ID')
         return
 
     process = FFMPEG_PROCESSES.get(message.chat.id)
@@ -57,9 +51,7 @@ async def start(client, message: Message):
     for line in msg_lines:
         line_prefix = f'{station_id}. '
         if line.startswith(line_prefix):
-            station_stream_url = (
-                line.replace(line_prefix, '').replace('\n', '')
-            )
+            station_stream_url = line.replace(line_prefix, '').replace('\n', '')
             break
 
     if not station_stream_url:
@@ -68,13 +60,12 @@ async def start(client, message: Message):
 
     await group_call.start(message.chat.id)
 
-    process = ffmpeg.input(station_stream_url).output(
-        input_filename,
-        format='s16le',
-        acodec='pcm_s16le',
-        ac=2,
-        ar='48k'
-    ).overwrite_output().run_async()
+    process = (
+        ffmpeg.input(station_stream_url)
+        .output(input_filename, format='s16le', acodec='pcm_s16le', ac=2, ar='48k')
+        .overwrite_output()
+        .run_async()
+    )
     FFMPEG_PROCESSES[message.chat.id] = process
 
     await message.reply_text(f'Radio #{station_id} is playing...')
