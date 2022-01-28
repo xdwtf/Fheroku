@@ -282,6 +282,7 @@ async def show_help(_, m: Message):
 async def skip_track(_, m: Message):
     playlist = mp.playlist
     if len(m.command) == 1:
+        await mp.playlist[0].unpin()
         await skip_current_playing()
     else:
         try:
@@ -330,6 +331,7 @@ async def join_group_call(client, m: Message):
                    & filters.regex("^!leave$"))
 async def leave_voice_chat(_, m: Message):
     group_call = mp.group_call
+    await mp.playlist[0].unpin()
     mp.playlist.clear()
     group_call.input_filename = ''
     await group_call.stop()
