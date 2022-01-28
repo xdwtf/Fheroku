@@ -504,6 +504,7 @@ async def skip_current_playing():
     # remove old track from playlist
     old_track = playlist.pop(0)
     print(f"- START PLAYING: {playlist[0].audio.title}")
+    await mp.pin_current_audio()
     await mp.send_playlist()
     os.remove(os.path.join(
         download_dir,
