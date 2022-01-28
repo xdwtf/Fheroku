@@ -22,6 +22,7 @@ Dependencies:
 
 Required group admin permissions:
 - Delete messages
+- Pin Currently Playing
 - Manage voice chats (optional)
 
 How to use:
@@ -40,6 +41,8 @@ from datetime import datetime, timedelta
 # noinspection PyPackageRequirements
 import ffmpeg
 from pyrogram import Client, filters, emoji
+from pyrogram.errors.exceptions.bad_request_400 import ChatAdminRequired
+from pyrogram.errors.exceptions.flood_420 import FloodWait
 from pyrogram.methods.messages.download_media import DEFAULT_DOWNLOAD_DIR
 from pyrogram.types import Message
 from pyrogram.utils import MAX_CHANNEL_ID
@@ -124,6 +127,23 @@ class MusicPlayer(object):
             else datetime.utcnow().replace(microsecond=0)
         )
 
+    async def pin_current_audio(self):
+        group_call = self.group_call
+        client = group_call.client
+        playlist = self.playlist
+        chat_id = int("-100" + str(group_call.full_chat.id))
+        try:
+            async for m in client.search_messages(chat_id,
+                                                  filter="pinned",
+                                                  limit=1):
+                if m.audio:
+                    await m.unpin()
+            await playlist[0].pin(True)
+        except ChatAdminRequired:
+            pass
+        except FloodWait:
+            pass
+
     async def send_playlist(self):
         playlist = self.playlist
         if not playlist:
@@ -134,7 +154,7 @@ class MusicPlayer(object):
             else:
                 pl = f"{emoji.PLAY_BUTTON} **Playlist**:\n"
             pl += "\n".join([
-                f"**{i}**. **[{x.audio.title}]({x.link})**"
+                f"**{i}**. **[{x.audio.title if x.audio.title else x.audio.file_name.replace('_', ' ') if x.audio.file_name else None}]({x.link})**"
                 for i, x in enumerate(playlist)
             ])
         if mp.msg.get('playlist') is not None:
@@ -218,6 +238,7 @@ async def play_track(client, m: Message):
         await mp.update_start_time()
         await m_status.delete()
         print(f"- START PLAYING: {playlist[0].audio.title}")
+        await mp.pin_current_audio()
     await mp.send_playlist()
     for track in playlist[:2]:
         await download_audio(track)
@@ -311,6 +332,7 @@ async def join_group_call(client, m: Message):
                    & filters.regex("^!leave$"))
 async def leave_voice_chat(_, m: Message):
     group_call = mp.group_call
+    await mp.playlist[0].unpin()
     mp.playlist.clear()
     group_call.input_filename = ''
     await group_call.stop()
@@ -343,6 +365,7 @@ async def stop_playing(_, m: Message):
     group_call = mp.group_call
     group_call.stop_playout()
     reply = await m.reply_text(f"{emoji.STOP_BUTTON} stopped playing")
+    await mp.playlist[0].unpin()
     await mp.update_start_time(reset=True)
     mp.playlist.clear()
     await _delay_delete_messages((reply, m), DELETE_DELAY)
@@ -483,6 +506,7 @@ async def skip_current_playing():
     # remove old track from playlist
     old_track = playlist.pop(0)
     print(f"- START PLAYING: {playlist[0].audio.title}")
+    await mp.pin_current_audio()
     await mp.send_playlist()
     os.remove(os.path.join(
         download_dir,
