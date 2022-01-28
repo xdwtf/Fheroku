@@ -282,7 +282,6 @@ async def show_help(_, m: Message):
 async def skip_track(_, m: Message):
     playlist = mp.playlist
     if len(m.command) == 1:
-        await mp.playlist[0].unpin()
         await skip_current_playing()
     else:
         try:
@@ -364,6 +363,7 @@ async def stop_playing(_, m: Message):
     group_call = mp.group_call
     group_call.stop_playout()
     reply = await m.reply_text(f"{emoji.STOP_BUTTON} stopped playing")
+    await mp.playlist[0].unpin()
     await mp.update_start_time(reset=True)
     mp.playlist.clear()
     await _delay_delete_messages((reply, m), DELETE_DELAY)
