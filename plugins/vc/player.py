@@ -134,7 +134,7 @@ class MusicPlayer(object):
             else:
                 pl = f"{emoji.PLAY_BUTTON} **Playlist**:\n"
             pl += "\n".join([
-                f"**{i}**. **[{x.audio.title}]({x.link})**"
+                f"**{i}**. **[{x.audio.title if x.audio.title else x.audio.file_name.replace('_', ' ') if x.audio.file_name else None}]({x.link})**"
                 for i, x in enumerate(playlist)
             ])
         if mp.msg.get('playlist') is not None:
@@ -419,7 +419,7 @@ async def clean_raw_pcm(client, m: Message):
                    & filters.regex("^!mute$"))
 async def mute(_, m: Message):
     group_call = mp.group_call
-    group_call.set_is_mute(True)
+    await group_call.set_is_mute(True)
     reply = await m.reply_text(f"{emoji.MUTED_SPEAKER} muted")
     await _delay_delete_messages((reply, m), DELETE_DELAY)
 
@@ -430,7 +430,7 @@ async def mute(_, m: Message):
                    & filters.regex("^!unmute$"))
 async def unmute(_, m: Message):
     group_call = mp.group_call
-    group_call.set_is_mute(False)
+    await group_call.set_is_mute(False)
     reply = await m.reply_text(f"{emoji.SPEAKER_MEDIUM_VOLUME} unmuted")
     await _delay_delete_messages((reply, m), DELETE_DELAY)
 
