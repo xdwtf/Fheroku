@@ -18,6 +18,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 !ping reply with pong
 !uptime check uptime
 """
+import os 
+import sys
 from datetime import datetime
 from time import time
 
@@ -67,6 +69,15 @@ async def ping_pong(_, m: Message):
         f"{emoji.ROBOT} ping: `{delta_ping * 1000:.3f} ms`"
     )
 
+
+@Client.on_message(filters.text
+                   & self_or_contact_filter
+                   & ~filters.edited
+                   & ~filters.via_bot
+                   & filters.regex("^!restart$"))
+async def restart(_, m: Message):
+    await message.reply_text("<i>Restarting...</i>")
+    os.system(f"kill -9 {os.getpid()} && python3 main.py")
 
 @Client.on_message(filters.text
                    & self_or_contact_filter
