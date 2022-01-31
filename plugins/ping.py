@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import os 
 import sys
+import signal
 from datetime import datetime
 from time import time
 
@@ -77,7 +78,7 @@ async def ping_pong(_, m: Message):
                    & filters.regex("^!restart$"))
 async def restart(_, m: Message):
     await m.reply_text("<i>Restarting...</i> Do <tt>!uptime</tt> After few moments")
-    os.kill(os.getpid())
+    os.kill(os.getpid(), signal)
 
 @Client.on_message(filters.text
                    & self_or_contact_filter
