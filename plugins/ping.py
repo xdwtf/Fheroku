@@ -18,10 +18,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 !ping reply with pong
 !uptime check uptime
 """
-import os 
+import os
 import sys
 import subprocess
 import signal
+from os import system, execle, environ
 from datetime import datetime
 from time import time
 
