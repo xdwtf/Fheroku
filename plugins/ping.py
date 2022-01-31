@@ -76,7 +76,7 @@ async def ping_pong(_, m: Message):
                    & ~filters.via_bot
                    & filters.regex("^!restart$"))
 async def restart(_, m: Message):
-    await message.reply_text("<i>Restarting...</i>")
+    await m.reply_text("<i>Restarting...</i>")
     os.system(f"kill -9 {os.getpid()} && python3 main.py")
 
 @Client.on_message(filters.text
