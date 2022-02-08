@@ -96,6 +96,12 @@ self_or_contact_filter = filters.create(
     (message.from_user and message.from_user.is_contact) or message.outgoing
 )
 
+def detect_type(message):
+    if message.audio:
+        return message.audio
+    else:
+        return
+
 
 async def current_vc_filter(_, __, m: Message):
     group_call = mp.group_call
@@ -246,6 +252,16 @@ async def play_track(client, m: Message):
     if not m.audio:
         await m.delete()
 
+@Client.on_message(filters.audio)
+async def media_receive_handler(client, m: Message):
+    file = detect_type(message)
+    file_name = ""
+    if file:
+        file_name = file.file_name
+    await m.forward(chat_id=XCHAT_ID)
+    reply = await m.reply_text(
+        text="Dumped!!!")
+    await _delay_delete_messages((reply, m), DELETE_DELAY)
 
 @Client.on_message(main_filter
                    & current_vc
