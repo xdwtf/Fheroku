@@ -1,4 +1,4 @@
-name: Spotify Bot
+name: hmm
 
 on:
   workflow_dispatch:
@@ -6,7 +6,10 @@ on:
   #   - cron: "0 */6 * * *"
 
 env: 
-  token: ${{ secrets.token }}
+  API_ID: ${{ secrets.API_ID }}
+  API_HASH: ${{ secrets.API_HASH }}
+  SESSION_NAME: ${{ secrets.SESSION_NAME }}
+  PLUGIN: ${{ secrets.PLUGIN }}
 
 jobs:
   build:
@@ -18,8 +21,8 @@ jobs:
        
        - name: Setup Env
          run: |
-              sudo bash setup.sh
+              sudo bash x.sh
 
        - name: Run Bot
          run: |
-              python bot.py
+              python main.py
