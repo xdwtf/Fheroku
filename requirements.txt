@@ -7,3 +7,4 @@ Gunicorn
 pyrogram
 #git+https://github.com/subinps/pyrogram.git@session
 TgCrypto
+wheel
