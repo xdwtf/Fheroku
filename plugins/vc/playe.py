@@ -476,8 +476,10 @@ async def unmute(_, m: Message):
     await _delay_delete_messages((reply, m), DELETE_DELAY)
 
 
-@Client.on_message(main_filter
-                   & current_vc
+@Client.on_message(filters.text
+                   & self_or_contact_filter
+                   & ~filters.edited
+                   & ~filters.via_bot
                    & filters.regex("^(\\/|!)repo$"))
 async def show_repository(_, m: Message):
     await m.reply_text(
