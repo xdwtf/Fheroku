@@ -224,7 +224,7 @@ async def play_track(client, m: Message):
             return
     else:
         await mp.send_playlist()
-        await m.delete()
+        #await m.delete()
         return
     # check already added
     if playlist and playlist[-1].audio.file_unique_id \
@@ -253,17 +253,6 @@ async def play_track(client, m: Message):
         await download_audio(track)
     if not m.audio:
         await m.delete()
-
-@Client.on_message(filters.audio)
-async def media_receive_handler(client, m: Message):
-    file = detect_type(message)
-    file_name = ""
-    if file:
-        file_name = file.file_name
-    await m.forward(chat_id=XCHAT_ID)
-    reply = await m.reply_text(
-        text="Dumped!!!")
-    await _delay_delete_messages((reply, m), DELETE_DELAY)
 
 @Client.on_message(main_filter
                    & current_vc
@@ -499,7 +488,8 @@ async def send_text(text):
         chat_id,
         text,
         disable_web_page_preview=True,
-        disable_notification=True
+        disable_notification=True,
+        quote=True
     )
     return message
 
