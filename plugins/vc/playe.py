@@ -275,6 +275,8 @@ async def skip_track(_, m: Message):
     if len(m.command) == 1:
         #await mp.playlist[0].unpin()
         await skip_current_playing()
+        xzx = await mp.send_playlist()
+        await m.reply_text(xzx, quote=True)
     else:
         try:
             items = list(dict.fromkeys(m.command[1:]))
@@ -295,9 +297,9 @@ async def skip_track(_, m: Message):
             zxz = await mp.send_playlist()
             await m.reply_text(zxz, quote=True)
         except (ValueError, TypeError):
-            reply = await m.reply_text(f"{emoji.NO_ENTRY} invalid input",
+            await m.reply_text(f"{emoji.NO_ENTRY} invalid input",
                                        disable_web_page_preview=True)
-        await _delay_delete_messages((reply, m), DELETE_DELAY)
+        #await _delay_delete_messages((reply, m), DELETE_DELAY)
 
 
 @Client.on_message(main_filter
@@ -497,8 +499,6 @@ async def skip_current_playing():
     old_track = playlist.pop(0)
     print(f"- START PLAYING: {playlist[0].audio.title}")
     #await mp.pin_current_audio()
-    xzx = await mp.send_playlist()
-    await m.reply_text(xzx, quote=True)
     os.remove(os.path.join(
         download_dir,
         f"{old_track.audio.file_unique_id}.raw")
