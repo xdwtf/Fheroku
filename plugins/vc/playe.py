@@ -205,7 +205,8 @@ async def play_track(client, m: Message):
             #await _delay_delete_messages((reply,), DELETE_DELAY)
             return
     else:
-        await m.reply_text(mp.send_playlist(), quote=True)
+        zx = await mp.send_playlist()
+        await m.reply_text(zx, quote=True)
         #await m.delete()
         return
     # check already added
