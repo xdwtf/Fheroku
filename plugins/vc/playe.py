@@ -159,7 +159,7 @@ mp = MusicPlayer()
 # - pytgcalls handlers
 
 
-async def network_status_changed_handler(context, is_connected: bool, m: Message):
+async def network_status_changed_handler(context, is_connected: bool):
     if is_connected:
         mp.chat_id = MAX_CHANNEL_ID - context.full_chat.id
         await m.reply_text(chat_id=mp.chat_id, f"{emoji.CHECK_MARK_BUTTON} joined the voice chat", quote=True)
