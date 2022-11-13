@@ -270,8 +270,8 @@ async def show_current_playing_time(_, m: Message):
     start_time = mp.start_time
     playlist = mp.playlist
     if not start_time:
-        reply = await m.reply_text(f"{emoji.PLAY_BUTTON} unknown", quote=True)
-        await _delay_delete_messages((reply, m), DELETE_DELAY)
+        await m.reply_text(f"{emoji.PLAY_BUTTON} unknown", quote=True)
+        #await _delay_delete_messages((reply, m), DELETE_DELAY)
         return
     utcnow = datetime.utcnow().replace(microsecond=0)
     await playlist[0].reply_text(
