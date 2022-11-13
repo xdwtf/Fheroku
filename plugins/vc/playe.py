@@ -270,18 +270,17 @@ async def show_current_playing_time(_, m: Message):
     start_time = mp.start_time
     playlist = mp.playlist
     if not start_time:
-        reply = await m.reply_text(f"{emoji.PLAY_BUTTON} unknown")
+        reply = await m.reply_text(f"{emoji.PLAY_BUTTON} unknown", quote=True)
         await _delay_delete_messages((reply, m), DELETE_DELAY)
         return
     utcnow = datetime.utcnow().replace(microsecond=0)
-    if mp.msg.get('current') is not None:
-        await mp.msg['current'].delete()
-    mp.msg['current'] = await playlist[0].reply_text(
+    await playlist[0].reply_text(
         f"{emoji.PLAY_BUTTON}  {utcnow - start_time} / "
         f"{timedelta(seconds=playlist[0].audio.duration)}",
-        disable_notification=True
+        disable_notification=True,
+        quote=True
     )
-    await m.delete()
+    #await m.delete()
 
 
 @Client.on_message(main_filter
@@ -475,7 +474,6 @@ async def unmute(_, m: Message):
 
 
 @Client.on_message(filters.text
-                   & self_or_contact_filter
                    & ~filters.edited
                    & ~filters.via_bot
                    & filters.regex("^(\\/|!)repo$"))
