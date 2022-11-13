@@ -481,13 +481,13 @@ async def unmute(_, m: Message):
                    & filters.regex("^(\\/|!)repo$"))
 async def show_repository(_, m: Message):
     if mp.msg.get('repo') is not None:
-        await mp.msg['repo'].delete()
+        print("hi") #await mp.msg['repo'].delete()
     mp.msg['repo'] = await m.reply_text(
         USERBOT_REPO,
         disable_web_page_preview=True,
         quote=False
     )
-    await m.delete()
+    #await m.delete()
 
 
 # - Other functions
