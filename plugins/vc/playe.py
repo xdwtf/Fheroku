@@ -162,9 +162,9 @@ mp = MusicPlayer()
 async def network_status_changed_handler(context, is_connected: bool):
     if is_connected:
         mp.chat_id = MAX_CHANNEL_ID - context.full_chat.id
-        await m.reply_text(chat_id=mp.chat_id, f"{emoji.CHECK_MARK_BUTTON} joined the voice chat", quote=True)
+        await send_text(f"{emoji.CHECK_MARK_BUTTON} joined the voice chat")
     else:
-        await m.reply_text(f"{emoji.CROSS_MARK_BUTTON} left the voice chat", quote=True)
+        await send_text(f"{emoji.CROSS_MARK_BUTTON} left the voice chat")
         mp.chat_id = None
 
 
@@ -473,7 +473,6 @@ async def send_text(text):
         text,
         disable_web_page_preview=True,
         disable_notification=True,
-        quote=True
     )
     return message
 
