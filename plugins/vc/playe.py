@@ -480,12 +480,11 @@ async def unmute(_, m: Message):
                    & current_vc
                    & filters.regex("^(\\/|!)repo$"))
 async def show_repository(_, m: Message):
-    reply = await m.reply_text(
+    await m.reply_text(
         USERBOT_REPO,
         disable_web_page_preview=True,
-        quote=False
+        quote=true
     )
-    await _delay_delete_messages((reply, m), DELETE_DELAY)
     #await m.delete()
 
 
