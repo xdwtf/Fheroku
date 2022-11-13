@@ -159,12 +159,12 @@ mp = MusicPlayer()
 # - pytgcalls handlers
 
 
-async def network_status_changed_handler(context, is_connected: bool):
+async def network_status_changed_handler(context, is_connected: bool, m):
     if is_connected:
         mp.chat_id = MAX_CHANNEL_ID - context.full_chat.id
-        await send_text(f"{emoji.CHECK_MARK_BUTTON} joined the voice chat")
+        await m.reply_text(f"{emoji.CHECK_MARK_BUTTON} joined the voice chat", quote=True)
     else:
-        await send_text(f"{emoji.CROSS_MARK_BUTTON} left the voice chat")
+        await m.reply_text(f"{emoji.CROSS_MARK_BUTTON} left the voice chat", quote=True)
         mp.chat_id = None
 
 
@@ -307,7 +307,7 @@ async def join_group_call(client, m: Message):
     if not group_call:
         mp.group_call = GroupCallFactory(client).get_file_group_call()
         mp.group_call.add_handler(network_status_changed_handler,
-                                  GroupCallFileAction.NETWORK_STATUS_CHANGED)
+                                  GroupCallFileAction.NETWORK_STATUS_CHANGED,m)
         mp.group_call.add_handler(playout_ended_handler,
                                   GroupCallFileAction.PLAYOUT_ENDED)
         await mp.group_call.start(m.chat.id)
