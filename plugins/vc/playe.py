@@ -485,7 +485,7 @@ async def show_repository(_, m: Message):
     await m.reply_text(
         USERBOT_REPO,
         disable_web_page_preview=True,
-        quote=true
+        quote=True
     )
     #await m.delete()
 
