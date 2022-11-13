@@ -212,8 +212,8 @@ async def play_track(client, m: Message):
     # check already added
     if playlist and playlist[-1].audio.file_unique_id \
             == m_audio.audio.file_unique_id:
-        reply = await m.reply_text(f"{emoji.ROBOT} already added")
-        await _delay_delete_messages((reply, m), DELETE_DELAY)
+        await m.reply_text(f"{emoji.ROBOT} already added")
+        #await _delay_delete_messages((reply, m), DELETE_DELAY)
         return
     # add to playlist
     playlist.append(m_audio)
@@ -231,11 +231,12 @@ async def play_track(client, m: Message):
         await m_status.delete()
         print(f"- START PLAYING: {playlist[0].audio.title}")
         #await mp.pin_current_audio()
-    await mp.send_playlist()
+    zzx = await mp.send_playlist()
+    await m.reply_text(zzx, quote=True)
     for track in playlist[:2]:
         await download_audio(track)
     if not m.audio:
-        await m.delete()
+        print("idk") #await m.delete()
 
 @Client.on_message(main_filter
                    & current_vc
@@ -291,7 +292,8 @@ async def skip_track(_, m: Message):
                 "\n".join(text),
                 disable_web_page_preview=True
             )
-            await mp.send_playlist()
+            zxz = await mp.send_playlist()
+            await m.reply_text(zxz, quote=True)
         except (ValueError, TypeError):
             reply = await m.reply_text(f"{emoji.NO_ENTRY} invalid input",
                                        disable_web_page_preview=True)
@@ -495,7 +497,8 @@ async def skip_current_playing():
     old_track = playlist.pop(0)
     print(f"- START PLAYING: {playlist[0].audio.title}")
     #await mp.pin_current_audio()
-    await mp.send_playlist()
+    xzx = await mp.send_playlist()
+    await m.reply_text(xzx, quote=True)
     os.remove(os.path.join(
         download_dir,
         f"{old_track.audio.file_unique_id}.raw")
