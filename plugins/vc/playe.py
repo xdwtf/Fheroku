@@ -148,9 +148,7 @@ class MusicPlayer(object):
                 f"**{i}**. **[{x.audio.title if x.audio.title else x.audio.file_name.replace('_', ' ') if x.audio.file_name else None}]({x.link})**"
                 for i, x in enumerate(playlist)
             ])
-        if mp.msg.get('playlist') is not None:
-            await mp.msg['playlist'].delete()
-        mp.msg['playlist'] = await send_text(pl)
+        return pl
 
 
 mp = MusicPlayer()
@@ -207,7 +205,7 @@ async def play_track(client, m: Message):
             #await _delay_delete_messages((reply,), DELETE_DELAY)
             return
     else:
-        await mp.send_playlist()
+        await m.reply_text(mp.send_playlist(), quote=True)
         #await m.delete()
         return
     # check already added
