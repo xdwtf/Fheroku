@@ -227,7 +227,7 @@ async def play_track(client, m: Message):
             DEFAULT_DOWNLOAD_DIR,
             f"{playlist[0].audio.file_unique_id}.raw"
         )
-        group_call.input_filename = assert os.path.isfile(pt)
+        group_call.input_filename = os.path.isfile(pt)
         await mp.update_start_time()
         await m_status.delete()
         print(f"- START PLAYING: {playlist[0].audio.title}")
