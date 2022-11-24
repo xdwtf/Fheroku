@@ -9,11 +9,12 @@ RUN apt-get install -y ffmpeg opus-tools bpm-tools
 RUN python -m pip install --upgrade pip
 RUN python -m pip install wheel
 
-COPY requirements.txt /requirements.txt
-RUN cd /
-RUN pip3 install -U -r requirements.txt
+COPY requirements.txt .
 
-WORKDIR /tgvc-userbot-dev
-COPY x.sh /x.sh
+RUN pip install -r requirements.txt
 
-CMD ["bash", "/x.sh"]
+COPY . .
+
+USER 1000
+
+CMD [ "python", "./main.py" ]
