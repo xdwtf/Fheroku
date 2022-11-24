@@ -13,6 +13,8 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
+WORKDIR /tgvc-userbot-dev
+
 COPY . .
 
 USER 1000
