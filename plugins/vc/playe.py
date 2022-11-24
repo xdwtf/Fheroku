@@ -222,11 +222,12 @@ async def play_track(client, m: Message):
             f"{emoji.INBOX_TRAY} downloading and transcoding..."
         )
         await download_audio(playlist[0])
-        group_call.input_filename = os.path.join(
+        pt = os.path.join(
             client.workdir,
             DEFAULT_DOWNLOAD_DIR,
             f"{playlist[0].audio.file_unique_id}.raw"
         )
+        group_call.input_filename = assert os.path.isfile(pt)
         await mp.update_start_time()
         await m_status.delete()
         print(f"- START PLAYING: {playlist[0].audio.title}")
