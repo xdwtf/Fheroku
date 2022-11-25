@@ -47,7 +47,7 @@ app = Client(SESSION_NAME, API_ID, API_HASH, plugins=PLUGINS)
 
 # logging.basicConfig(level=logging.INFO)
 app.start()
-init()
+#init()
 print('>>> USERBOT STARTED')
 idle()
 app.stop()
