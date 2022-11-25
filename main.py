@@ -16,13 +16,16 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 from os import environ
+from aiohttp import web
 
 # import logging
 from pyrogram import Client, idle
+from plugins import web_server
 
 API_ID = int(environ["API_ID"])
 API_HASH = environ["API_HASH"]
 SESSION_NAME = environ["SESSION_NAME"]
+PORT = "8080"
 
 PLUGINS = dict(
     root="plugins",
@@ -30,10 +33,15 @@ PLUGINS = dict(
         "vc." + environ["PLUGIN"],
         "ping",
         "sysinfo"
+        "route"
     ]
 )
 
 app = Client(SESSION_NAME, API_ID, API_HASH, plugins=PLUGINS)
+appx = web.AppRunner(await web_server())
+await appx.setup()
+await web.TCPSite(appx, bind_address, PORT).start()
+
 # logging.basicConfig(level=logging.INFO)
 app.start()
 print('>>> USERBOT STARTED')
