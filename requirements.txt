@@ -7,3 +7,4 @@ Gunicorn
 pyrogram==1.4.15
 #git+https://github.com/subinps/pyrogram.git@session
 TgCrypto
+aiohttp
