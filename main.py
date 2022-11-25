@@ -36,14 +36,18 @@ PLUGINS = dict(
         "route"
     ]
 )
+async def init():
+    appx = web.AppRunner(await web_server())
+    await appx.setup()
+    await web.TCPSite(appx, bind_address, PORT).start()
+
+
 
 app = Client(SESSION_NAME, API_ID, API_HASH, plugins=PLUGINS)
-appx = web.AppRunner(await web_server())
-await appx.setup()
-await web.TCPSite(appx, bind_address, PORT).start()
 
 # logging.basicConfig(level=logging.INFO)
 app.start()
+init()
 print('>>> USERBOT STARTED')
 idle()
 app.stop()
