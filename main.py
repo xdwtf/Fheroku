@@ -33,7 +33,6 @@ PLUGINS = dict(
         "vc." + environ["PLUGIN"],
         "ping",
         "sysinfo"
-        "route"
     ]
 )
 async def init():
