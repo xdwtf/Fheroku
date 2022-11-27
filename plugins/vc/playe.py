@@ -51,6 +51,7 @@ from pytgcalls import GroupCallFactory, GroupCallFileAction
 DELETE_DELAY = 8
 DURATION_AUTOPLAY_MIN = 10
 DURATION_PLAY_HOUR = 3
+FILE_SIZE_LIMIT = 40000000
 
 USERBOT_HELP = f"""{emoji.LABEL}  **Common Commands**:
 __available to group members of current voice chat__
@@ -184,10 +185,10 @@ async def play_track(client, m: Message):
     playlist = mp.playlist
     # check audio
     if m.audio:
-        if m.audio.duration > (DURATION_AUTOPLAY_MIN * 60):
+        if ((m.audio.duration > (DURATION_AUTOPLAY_MIN * 60)) or (m.audio.file_size > FILE_SIZE_LIMIT)):
             await m.reply_text(
                 f"{emoji.ROBOT} audio which duration longer than "
-                f"{str(DURATION_AUTOPLAY_MIN)} min won't be automatically "
+                f"{str(DURATION_AUTOPLAY_MIN)} min / FILE_SIZE > 40mb won't be automatically "
                 "added to playlist",
                 quote=True
             )
@@ -196,10 +197,10 @@ async def play_track(client, m: Message):
         m_audio = m
     elif m.reply_to_message and m.reply_to_message.audio:
         m_audio = m.reply_to_message
-        if m_audio.audio.duration > (DURATION_PLAY_HOUR * 60 * 60):
+        if ((m_audio.audio.duration > (DURATION_PLAY_HOUR * 60 * 60)) or (m_audio.audio.file_size > FILE_SIZE_LIMIT)):
             await m.reply_text(
                 f"{emoji.ROBOT} audio which duration longer than "
-                f"{str(DURATION_PLAY_HOUR)} hours won't be added to playlist",
+                f"{str(DURATION_PLAY_HOUR)} hours / FILE_SIZE > 40mb won't be added to playlist",
                 quote=True
             )
             #await _delay_delete_messages((reply,), DELETE_DELAY)
