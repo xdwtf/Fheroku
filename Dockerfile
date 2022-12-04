@@ -19,4 +19,4 @@ COPY . .
 
 USER 1000
 
-CMD [ "bash", "run.sh" ]
+CMD [ "bash", "x.sh" ]
