@@ -19,4 +19,4 @@ COPY . .
 
 USER 1000
 
-CMD [ "python", "./main.py" ]
+CMD [ "bash", "run.sh" ]
