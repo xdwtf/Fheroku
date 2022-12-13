@@ -81,10 +81,9 @@ __starts with ! (exclamation mark)__
 \u2022 `!restart`  restart the VC userbot(partially)
 """
 
-USERBOT_REPO = f"""{emoji.ROBOT} **Telegram Voice Chat UserBot**
+USERBOT_REPO = f"""{emoji.ROBOT} **Eyamika ✨ A Group Management Bot**
 
-- Repository: [GitHub](https://t.me/IsThisForum)
-- License: AGPL-3.0-or-later"""
+- Add: [Eyamika ✨](http://t.me/eyamikabot?startgroup=true&admin=change_info+post_messages+edit_messages+delete_messages+restrict_members+invite_users+pin_messages+promote_members+manage_video_chats+manage_chat) """
 
 # - Pyrogram filters
 
@@ -149,7 +148,9 @@ class MusicPlayer(object):
                 f"**{i}**. **[{x.audio.title if x.audio.title else x.audio.file_name.replace('_', ' ') if x.audio.file_name else None}]({x.link})**"
                 for i, x in enumerate(playlist)
             ])
-        return pl
+        if mp.msg.get('playlist') is not None:
+            await mp.msg['playlist'].delete()
+        mp.msg['playlist'] = await send_text(pl)
 
 
 mp = MusicPlayer()
@@ -186,35 +187,32 @@ async def play_track(client, m: Message):
     # check audio
     if m.audio:
         if ((m.audio.duration > (DURATION_AUTOPLAY_MIN * 60)) or (m.audio.file_size > FILE_SIZE_LIMIT)):
-            await m.reply_text(
+            reply = await m.reply_text(
                 f"{emoji.ROBOT} audio which duration longer than "
                 f"{str(DURATION_AUTOPLAY_MIN)} min / FILE_SIZE > 10mb won't be automatically "
-                "added to playlist",
-                quote=True
+                "added to playlist"
             )
-            #await _delay_delete_messages((reply,), DELETE_DELAY)
+            await _delay_delete_messages((reply,), DELETE_DELAY)
             return
         m_audio = m
     elif m.reply_to_message and m.reply_to_message.audio:
         m_audio = m.reply_to_message
         if ((m_audio.audio.duration > (DURATION_PLAY_HOUR * 60 * 60)) or (m_audio.audio.file_size > FILE_SIZE_LIMIT)):
-            await m.reply_text(
+            reply = await m.reply_text(
                 f"{emoji.ROBOT} audio which duration longer than "
-                f"{str(DURATION_PLAY_HOUR)} hours / FILE_SIZE > 10mb won't be added to playlist",
-                quote=True
+                f"{str(DURATION_PLAY_HOUR)} hours / FILE_SIZE > 10mb won't be added to playlist"
             )
-            #await _delay_delete_messages((reply,), DELETE_DELAY)
+            await _delay_delete_messages((reply,), DELETE_DELAY)
             return
     else:
-        zx = await mp.send_playlist()
-        await m.reply_text(zx, quote=True)
-        #await m.delete()
+        await mp.send_playlist()
+        await m.delete()
         return
     # check already added
     if playlist and playlist[-1].audio.file_unique_id \
             == m_audio.audio.file_unique_id:
-        await m.reply_text(f"{emoji.ROBOT} already added")
-        #await _delay_delete_messages((reply, m), DELETE_DELAY)
+        reply = await m.reply_text(f"{emoji.ROBOT} already added")
+        await _delay_delete_messages((reply, m), DELETE_DELAY)
         return
     # add to playlist
     playlist.append(m_audio)
@@ -232,12 +230,11 @@ async def play_track(client, m: Message):
         await m_status.delete()
         print(f"- START PLAYING: {playlist[0].audio.title}")
         #await mp.pin_current_audio()
-    zzx = await mp.send_playlist()
-    await m.reply_text(zzx, quote=True)
+    await mp.send_playlist()
     for track in playlist[:2]:
         await download_audio(track)
     if not m.audio:
-        print("idk") #await m.delete()
+        await m.delete()
 
 @Client.on_message(main_filter
                    & current_vc
@@ -246,25 +243,28 @@ async def show_current_playing_time(_, m: Message):
     start_time = mp.start_time
     playlist = mp.playlist
     if not start_time:
-        await m.reply_text(f"{emoji.PLAY_BUTTON} unknown", quote=True)
-        #await _delay_delete_messages((reply, m), DELETE_DELAY)
+        reply = await m.reply_text(f"{emoji.PLAY_BUTTON} unknown")
+        await _delay_delete_messages((reply, m), DELETE_DELAY)
         return
     utcnow = datetime.utcnow().replace(microsecond=0)
-    await playlist[0].reply_text(
+    if mp.msg.get('current') is not None:
+        await mp.msg['current'].delete()
+    mp.msg['current'] = await playlist[0].reply_text(
         f"{emoji.PLAY_BUTTON}  {utcnow - start_time} / "
         f"{timedelta(seconds=playlist[0].audio.duration)}",
-        disable_notification=True,
-        quote=True
+        disable_notification=True
     )
-    #await m.delete()
+    await m.delete()
 
 
 @Client.on_message(main_filter
                    & (self_or_contact_filter | current_vc)
                    & filters.regex("^(\\/|!)help$"))
 async def show_help(_, m: Message):
-    await m.reply_text(USERBOT_HELP, quote=True)
-    #await m.delete()
+    if mp.msg.get('help') is not None:
+        await mp.msg['help'].delete()
+    mp.msg['help'] = await m.reply_text(USERBOT_HELP, quote=False)
+    await m.delete()
 
 
 @Client.on_message(main_filter
@@ -276,8 +276,6 @@ async def skip_track(_, m: Message):
     if len(m.command) == 1:
         #await mp.playlist[0].unpin()
         await skip_current_playing()
-        xzx = await mp.send_playlist()
-        await m.reply_text(xzx, quote=True)
     else:
         try:
             items = list(dict.fromkeys(m.command[1:]))
@@ -291,17 +289,15 @@ async def skip_track(_, m: Message):
                     text.append(f"{emoji.WASTEBASKET} {i}. **{audio}**")
                 else:
                     text.append(f"{emoji.CROSS_MARK} {i}")
-            await m.reply_text(
+            reply = await m.reply_text(
                 "\n".join(text),
-                disable_web_page_preview=True,
-                quote=True
+                disable_web_page_preview=True
             )
-            zxz = await mp.send_playlist()
-            await m.reply_text(zxz, quote=True)
+            await mp.send_playlist()
         except (ValueError, TypeError):
-            await m.reply_text(f"{emoji.NO_ENTRY} invalid input",
+            reply = await m.reply_text(f"{emoji.NO_ENTRY} invalid input",
                                        disable_web_page_preview=True)
-        #await _delay_delete_messages((reply, m), DELETE_DELAY)
+        await _delay_delete_messages((reply, m), DELETE_DELAY)
 
 
 @Client.on_message(main_filter
@@ -316,7 +312,7 @@ async def join_group_call(client, m: Message):
         mp.group_call.add_handler(playout_ended_handler,
                                   GroupCallFileAction.PLAYOUT_ENDED)
         await mp.group_call.start(m.chat.id)
-        #await m.delete()
+        await m.delete()
     if group_call and group_call.is_connected:
         await m.reply_text(f"{emoji.ROBOT} already joined a voice chat")
 
@@ -453,17 +449,18 @@ async def unmute(_, m: Message):
     await _delay_delete_messages((reply, m), DELETE_DELAY)
 
 
-@Client.on_message(filters.text
-                   & ~filters.edited
-                   & ~filters.via_bot
+@Client.on_message(main_filter
+                   & current_vc
                    & filters.regex("^(\\/|!)repo$"))
 async def show_repository(_, m: Message):
-    await m.reply_text(
+    if mp.msg.get('repo') is not None:
+        await mp.msg['repo'].delete()
+    mp.msg['repo'] = await m.reply_text(
         USERBOT_REPO,
         disable_web_page_preview=True,
-        quote=True
+        quote=False
     )
-    #await m.delete()
+    await m.delete()
 
 
 # - Other functions
@@ -477,7 +474,7 @@ async def send_text(text):
         chat_id,
         text,
         disable_web_page_preview=True,
-        disable_notification=True,
+        disable_notification=True
     )
     return message
 
@@ -501,6 +498,7 @@ async def skip_current_playing():
     old_track = playlist.pop(0)
     print(f"- START PLAYING: {playlist[0].audio.title}")
     #await mp.pin_current_audio()
+    await mp.send_playlist()
     os.remove(os.path.join(
         download_dir,
         f"{old_track.audio.file_unique_id}.raw")
