@@ -49,9 +49,9 @@ from pyrogram.utils import MAX_CHANNEL_ID
 from pytgcalls import GroupCallFactory, GroupCallFileAction
 
 DELETE_DELAY = 8
-DURATION_AUTOPLAY_MIN = 10
+DURATION_AUTOPLAY_MIN = 20
 DURATION_PLAY_HOUR = 3
-FILE_SIZE_LIMIT = 10000000
+FILE_SIZE_LIMIT = 100000000
 
 USERBOT_HELP = f"""{emoji.LABEL}  **Common Commands**:
 __available to group members of current voice chat__
