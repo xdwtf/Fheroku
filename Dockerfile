@@ -4,19 +4,18 @@ ENV VIRTUAL_ENV "/venv"
 RUN python -m venv $VIRTUAL_ENV
 ENV PATH "$VIRTUAL_ENV/bin:$PATH"
 
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y ffmpeg opus-tools bpm-tools
+RUN apt-get -qq update && apt-get -qq upgrade -y
+RUN apt-get -qq install -y --no-install-recommends \
+    ffmpeg \
+    opus-tools \
+    bpm-tools
+
 RUN python -m pip install --upgrade pip
 RUN python -m pip install wheel
 
-COPY requirements.txt .
+RUN git clone https://github.com/xdwtf/Fheroku
+WORKDIR /Fheroku
 
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
-WORKDIR /tgvc-userbot-dev
-
-COPY . .
-
-USER 1000
-
-CMD [ "bash", "x.sh" ]
+CMD ["bash", "x.sh"]
