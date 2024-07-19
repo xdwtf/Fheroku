@@ -13,12 +13,10 @@ RUN apt-get -qq install -y --no-install-recommends \
 RUN python -m pip install --upgrade pip
 RUN python -m pip install wheel
 
-COPY requirements.txt .
-
-RUN pip install -r requirements.txt
-
 WORKDIR /Fheroku
 
 COPY . .
+
+RUN pip install -r requirements.txt
 
 CMD [ "bash", "x.sh" ]
